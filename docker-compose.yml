@@ -1,0 +1,18 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: facial-skin-analysis-backend
+    environment:
+      ALLOWED_ORIGINS: http://localhost,http://127.0.0.1
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: facial-skin-analysis-frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
