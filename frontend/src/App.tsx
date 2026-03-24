@@ -4,8 +4,13 @@ import { AnalysisResultPanel } from "./components/AnalysisResultPanel";
 import { ImageSourcePanel } from "./components/ImageSourcePanel";
 import { AnalysisResponse } from "./types/analysis";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? (import.meta.env.DEV ? "http://127.0.0.1:8000" : "/api");
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+
 const API_URL = `${API_BASE_URL}/analyze`;
+
+
+
 const SCAN_STEPS = [
   "Scanning skin texture...",
   "Mapping dark spots and visible lesions...",
