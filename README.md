@@ -1,47 +1,24 @@
 # Facial Skin Analysis System
 
-End-to-end AI-assisted facial skin analysis application with a FastAPI backend and React frontend.
+A web-based skin analysis application that lets users upload a face image or capture one with a webcam, then analyzes visible skin conditions such as pimples, whiteheads, blackheads, dark spots, and oily skin regions. The system returns an annotated image along with a structured analysis report in a clean, user-friendly interface.
 
-## File Structure
 
-```text
-Playground/
-|-- backend/
-|   |-- app/
-|   |   |-- api/routes/analyze.py
-|   |   |-- core/config.py
-|   |   |-- detectors/
-|   |   |   |-- dark_spots.py
-|   |   |   |-- imperfections.py
-|   |   |   `-- oiliness.py
-|   |   |-- pipeline/
-|   |   |   |-- face_detection.py
-|   |   |   |-- pipeline.py
-|   |   |   |-- preprocessing.py
-|   |   |   `-- skin_segmentation.py
-|   |   |-- schemas/analysis.py
-|   |   |-- services/analysis_service.py
-|   |   |-- utils/image_io.py
-|   |   |-- visualization/annotator.py
-|   |   `-- main.py
-|   `-- requirements.txt
-|-- docs/
-|   `-- architecture.md
-`-- frontend/
-    |-- src/
-    |   |-- components/
-    |   |   |-- AnalysisResultPanel.tsx
-    |   |   `-- ImageSourcePanel.tsx
-    |   |-- types/analysis.ts
-    |   |-- App.tsx
-    |   |-- main.tsx
-    |   `-- styles.css
-    |-- index.html
-    |-- package.json
-    |-- tsconfig.json
-    |-- tsconfig.node.json
-    `-- vite.config.ts
-```
+## Problem Statement
+Many people want a quick and simple way to understand visible skin issues from a facial image without manually inspecting every area of the face. Traditional skin assessment often requires expert review, special tools, or time-consuming manual observation. This matters because early awareness of visible skin conditions can help users track skin changes, improve skincare decisions, and prepare better for professional consultation. The goal of this project is to make facial skin inspection faster, more accessible, and easier to understand through an AI-assisted image analysis workflow.
+
+
+## AI Usage Explanation
+AI is used in this project through computer vision-based facial analysis and automated visual condition detection.
+
+Current AI/computer vision usage:
+
+Face-focused image analysis to isolate the relevant facial region
+Skin-region extraction to reduce background noise
+Automated detection of visible irregularities using image-processing logic
+Brightness, texture, and contrast-based estimation for oily regions and dark spots
+Browser-side face guidance during webcam capture for better framing and image quality
+
+
 
 ## Pipeline
 
@@ -89,6 +66,14 @@ Production URLs:
 
 - Frontend: `http://localhost`
 - Backend health: `http://localhost/api/health`
+
+## Demo
+You can present the demo like this:
+![alt text](image.png)
+
+## Use any of these in your submission:
+
+Live demo: https://ai-face-p-detecting-m1euldahg-pranab-samanta-s-projects.vercel.app/
 
 Notes:
 
