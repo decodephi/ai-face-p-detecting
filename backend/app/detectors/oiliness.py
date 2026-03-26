@@ -35,19 +35,24 @@ def detect_oiliness(face_rgb: np.ndarray, skin_mask: np.ndarray) -> dict[str, np
 
     if np.count_nonzero(skin_mask):
         skin_values = shine_map[skin_mask > 0]
-        hotspot_threshold = float(np.percentile(skin_values, 92))
+        hotspot_threshold = float(np.percentile(skin_values, 88))
+        hotspot_threshold = np.clip(hotspot_threshold, 0.42, 0.78)
     else:
         hotspot_threshold = 0.72
 
     oily_mask = np.where(shine_map >= hotspot_threshold, shine_map, 0.0)
     oily_mask = np.uint8(np.clip(oily_mask * 255.0, 0, 255))
-    oily_mask = cv2.GaussianBlur(oily_mask, (11, 11), 0)
+    oily_mask = cv2.GaussianBlur(oily_mask, (9, 9), 0)
 
-    oily_pixels = cv2.countNonZero(cv2.inRange(oily_mask, 135, 255))
+    oily_pixels = cv2.countNonZero(cv2.inRange(oily_mask, 125, 255))
     skin_pixels = max(cv2.countNonZero(skin_mask), 1)
     mean_shine = float(np.mean(shine_map[skin_mask > 0])) if np.count_nonzero(skin_mask) else 0.0
     hotspot_ratio = oily_pixels / skin_pixels
-    score = round(min(1.0, (mean_shine * 0.48) + (hotspot_ratio * 1.1)), 4)
+
+    score = round(
+        min(1.0, (mean_shine * 0.55) + (hotspot_ratio * 1.0) - (0.06 if hotspot_ratio < 0.03 else 0.0)),
+        4,
+    )
 
     if score >= 0.42:
         skin_type = "Oily"

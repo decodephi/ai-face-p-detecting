@@ -7,9 +7,20 @@ import numpy as np
 def detect_dark_spots(face_rgb: np.ndarray, skin_mask: np.ndarray) -> dict[str, np.ndarray | float | int]:
     lab = cv2.cvtColor(face_rgb, cv2.COLOR_RGB2LAB)
     lightness = lab[:, :, 0]
-    baseline = cv2.GaussianBlur(lightness, (31, 31), 0)
-    difference = cv2.subtract(baseline, lightness)
-    dynamic_threshold = max(8, int(np.mean(difference[skin_mask > 0]) + np.std(difference[skin_mask > 0]) * 0.6)) if np.count_nonzero(skin_mask) else 12
+
+    # Reduce noise while preserving edges for a finer dark spot baseline
+    smooth_lightness = cv2.bilateralFilter(lightness, 9, 75, 75)
+    baseline = cv2.GaussianBlur(smooth_lightness, (31, 31), 0)
+    difference = cv2.subtract(baseline, smooth_lightness)
+
+    if np.count_nonzero(skin_mask):
+        mean_diff = np.mean(difference[skin_mask > 0])
+        std_diff = np.std(difference[skin_mask > 0])
+        dynamic_threshold = int(mean_diff + std_diff * 0.62)
+        dynamic_threshold = np.clip(dynamic_threshold, 6, 34)
+    else:
+        dynamic_threshold = 12
+
     _, dark_mask = cv2.threshold(difference, dynamic_threshold, 255, cv2.THRESH_BINARY)
     dark_mask = cv2.bitwise_and(dark_mask, skin_mask)
     dark_mask = cv2.morphologyEx(

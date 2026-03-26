@@ -44,7 +44,11 @@ def detect_imperfections(face_rgb: np.ndarray, skin_mask: np.ndarray, max_detect
     dog_large = cv2.GaussianBlur(gray, (0, 0), 3.8)
     detail = cv2.absdiff(dog_small, dog_large)
     detail = cv2.bitwise_and(detail, detail, mask=skin_mask)
-    adaptive_threshold = max(8, int(np.percentile(detail[skin_mask > 0], 84))) if np.count_nonzero(skin_mask) else 10
+    adaptive_threshold = (
+        max(6, int(np.percentile(detail[skin_mask > 0], 76)))
+        if np.count_nonzero(skin_mask)
+        else 8
+    )
     _, thresholded = cv2.threshold(detail, adaptive_threshold, 255, cv2.THRESH_BINARY)
     thresholded = cv2.morphologyEx(
         thresholded,
@@ -58,11 +62,11 @@ def detect_imperfections(face_rgb: np.ndarray, skin_mask: np.ndarray, max_detect
 
     for contour in contours:
         area = cv2.contourArea(contour)
-        if area < 5 or area > 180:
+        if area < 4 or area > 220:
             continue
 
         x, y, w, h = cv2.boundingRect(contour)
-        if w > 22 or h > 22:
+        if w > 28 or h > 28:
             continue
 
         roi_gray = gray[y : y + h, x : x + w]
@@ -84,11 +88,17 @@ def detect_imperfections(face_rgb: np.ndarray, skin_mask: np.ndarray, max_detect
         if circularity < 0.08:
             continue
 
-        confidence = min(0.94, 0.38 + (area / 240.0) + (circularity * 0.18))
+        confidence = min(
+            0.98,
+            0.38
+            + (area / 210.0)
+            + (circularity * 0.20)
+            + (0.12 if mean_lightness < 115 and mean_lightness > 70 else 0.0),
+        )
 
-        if mean_lightness < 92:
+        if mean_lightness < 96:
             label = "blackhead"
-        elif mean_lightness > 168:
+        elif mean_lightness > 162:
             label = "whitehead"
         else:
             label = "pimple"
